@@ -38,6 +38,8 @@ Client ──POST /api/send (Bearer API_KEY, JSON)──▶ Vercel Function
 | `lib/mailer.js` | Validation, OAuth token, MIME composition, Gmail API calls |
 | `public/index.html` | Public home page (`/`), describes the app for Google brand verification |
 | `public/privacy.html` | Privacy policy (`/privacy`) |
+| `public/logo.png`, `favicon.png`, `apple-touch-icon.png` | Logo and icons used by the pages |
+| `brand/` | Logo source (1024px) and 120×120 logos for the OAuth consent screen (not served) |
 | `.env.example` | Environment variable template (for local `vercel dev`) |
 
 ---
@@ -116,7 +118,8 @@ Before submitting:
 2. The pages use the app name `private-automation`; if your OAuth consent screen uses a different name, change the `<title>` and `<h1>` in both pages to match.
 3. The privacy policy describes the `gmail.send` scope; if you use `https://mail.google.com/`, either switch to `gmail.send` (recommended) or update the policy.
 4. In Search Console, choose the HTML tag method and paste the `<meta name="google-site-verification" ...>` tag at the marked spot in `public/index.html` (or put the downloaded `googleXXXX.html` file in `public/`), deploy, then click Verify.
-5. On the Branding page set home page to `https://<your-app>.vercel.app`, privacy policy to `https://<your-app>.vercel.app/privacy`, and add `<your-app>.vercel.app` under Authorized domains.
+5. (Optional) On the Branding page upload `brand/oauth-logo-120.png` (icon only) or `brand/oauth-logo-120-full.png` (with text) as the *App logo* (square, 120×120 px, under 1 MB). Uploading a logo also requires brand verification.
+6. On the Branding page set home page to `https://<your-app>.vercel.app`, privacy policy to `https://<your-app>.vercel.app/privacy`, and add `<your-app>.vercel.app` under Authorized domains.
 
 > ⚠️ The client secret, refresh token and access token are secrets. Keep them only in Vercel environment variables; never commit them to git or post them publicly.
 > If they have leaked, reset the client secret in Cloud Console, revoke the old grant at <https://myaccount.google.com/permissions>, then obtain a new token.
