@@ -74,6 +74,37 @@ For personal use you do **not** need Google verification; an unverified app in p
    update `GMAIL_REFRESH_TOKEN` in Vercel, then Redeploy. The old token still expires on its original 7-day schedule.
 4. Verify with `GET /api/health` (see [Post-deployment Verification](#post-deployment-verification)).
 
+### Brand Verification Issues
+
+If the console shows **Brand verification issues** (e.g. home page not responding, site not registered to you, no privacy policy link,
+privacy policy URL same as home page, home page requires login, app purpose not described, app name mismatch),
+it is because the Branding page contains URLs or a logo, or verification was submitted.
+
+**Getting refresh tokens that don't expire after 7 days only requires the "In production" status — brand verification is not needed.**
+
+**Option A (recommended for personal use): remove branding data and publish**
+
+1. Google Auth Platform → *Branding*:
+   - Clear *Application home page*, *Privacy policy link* and *Terms of service link*.
+   - Remove the *App logo* if uploaded (a logo also triggers brand verification).
+   - Remove entries under *Authorized domains*.
+   - Save.
+2. Google Auth Platform → *Audience* → **Publish app** → Confirm.
+3. Once the status is **In production** ("Unverified" is fine), re-issue the refresh token, update Vercel and Redeploy.
+
+The listed issues are from the previous verification attempt; once the fields are cleared they no longer affect publishing.
+
+**Option B: pass brand verification** (only worth it if other people will use the app and you want to remove the "unverified" warning)
+
+| Requirement | What to do |
+| --- | --- |
+| Public home page | Viewable without login, describes the app's purpose, links to the privacy policy |
+| Separate privacy policy page | A different URL from the home page, clearly describing what data is collected and how it is used |
+| Consistent app name | The name shown on the home page must match the OAuth consent screen app name |
+| Domain ownership | Verify a URL-prefix property (e.g. `https://<your-app>.vercel.app`) in [Google Search Console](https://search.google.com/search-console) via HTML file or meta tag, then wait 24 hours before retrying |
+
+On Vercel, static pages can be served by adding files such as `public/index.html` and `public/privacy.html` to this project.
+
 > ⚠️ The client secret, refresh token and access token are secrets. Keep them only in Vercel environment variables; never commit them to git or post them publicly.
 > If they have leaked, reset the client secret in Cloud Console, revoke the old grant at <https://myaccount.google.com/permissions>, then obtain a new token.
 
