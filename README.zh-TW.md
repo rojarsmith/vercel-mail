@@ -101,6 +101,15 @@ curl https://<your-app>.vercel.app/api/health -H "Authorization: Bearer $API_KEY
 curl -X POST https://<your-app>.vercel.app/api/send -H "Authorization: Bearer $API_KEY" -H "Content-Type: application/json" -d '{"to":"you@gmail.com","subject":"vercel-mail 測試","text":"純文字","html":"<b>HTML</b> 內容"}'
 ```
 
+   > **Windows（cmd.exe / PowerShell）**：cmd 不支援單引號，上面的 JSON 會被拆開導致 body 不是合法 JSON。
+   > 請把 JSON 存成 UTF-8 檔案（例如 `body.json`），用 `-d @body.json` 送出（PowerShell 請用 `curl.exe` 而非 `curl`）：
+   >
+   > ```bash
+   > curl.exe -X POST https://<your-app>.vercel.app/api/send -H "Authorization: Bearer <API_KEY>" -H "Content-Type: application/json" -d @body.json
+   > ```
+   >
+   > `<API_KEY>` 是你在 Vercel 設定的 `API_KEY` 值，**不是** Google 的 access token（`ya29.…`）。
+
 3. 到 Gmail「寄件備份」確認信件、再依需要測試附件與內嵌圖片（見下方範例）。
 
 ## 三、部署
