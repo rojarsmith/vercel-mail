@@ -37,6 +37,15 @@ a { color: var(--accent); }
   padding: 20px 24px;
   margin: 16px 0;
 }
+.card h2 { margin-top: 0; }
 code { font-size: 0.9em; background: var(--border); padding: 1px 6px; border-radius: 4px; }
 nav { display: flex; gap: 16px; flex-wrap: wrap; }
 footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 0.9rem; }
+.logo {
+  display: block;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+.logo-sm { border-radius: 12px; }
