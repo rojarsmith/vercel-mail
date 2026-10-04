@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy · private-automation</title>
+  <meta name="description" content="Privacy Policy for private-automation, a private email-sending service using the Gmail API.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>Privacy Policy</h1>
+      <p class="muted">private-automation · Last updated: October 4, 2026</p>
+      <nav>
+        <a href="/">Home</a>
+      </nav>
+    </header>
+
+    <p>
+      This Privacy Policy describes how <strong>private-automation</strong> ("the app") collects, uses and shares information
+      when it accesses Google user data through Google APIs.
+    </p>
+
+    <h2>1. Who operates the app</h2>
+    <p>
+      The app is a private, server-side email-sending service operated by an individual for personal use. It has no public
+      user accounts. The only Google account it accesses is the account of the owner who authorized it.
+    </p>
+
+    <h2>2. Google user data accessed</h2>
+    <ul>
+      <li><strong>Gmail send permission</strong> (OAuth scope <code>https://www.googleapis.com/auth/gmail.send</code>): used solely to send email messages from the authorizing account.</li>
+      <li>An <strong>OAuth refresh token</strong> for that account, stored as an encrypted environment variable on the hosting platform (Vercel) and used only to obtain short-lived access tokens.</li>
+    </ul>
+    <p>The app does <strong>not</strong> read, search, list, modify or delete existing email, labels, contacts, calendar or any other Google data.</p>
+
+    <h2>3. How data is used</h2>
+    <ul>
+      <li>Message data submitted to the app's API by the owner's own systems (recipients, subject, body, attachments) is converted into an email and passed directly to the Gmail API to be sent.</li>
+      <li>Message content is processed in memory only for the duration of the request and is <strong>not stored</strong> by the app.</li>
+      <li>The hosting platform may keep short-term operational logs (such as request time, status code and error messages) for troubleshooting.</li>
+    </ul>
+
+    <h2>4. Data sharing</h2>
+    <p>
+      Google user data is not sold, rented or shared with third parties, and is not used for advertising. Data is transmitted
+      only to Google (to send the email) and processed on the hosting platform (Vercel) as required to run the service.
+      All transmission uses HTTPS.
+    </p>
+
+    <h2>5. Google API Services User Data Policy</h2>
+    <p>
+      The app's use and transfer of information received from Google APIs adheres to the
+      <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>,
+      including the Limited Use requirements.
+    </p>
+
+    <h2>6. Data retention and deletion</h2>
+    <p>
+      Email content is not retained by the app. Sent messages remain in the authorizing account's Gmail "Sent" folder under
+      that account owner's control. Access can be revoked at any time at
+      <a href="https://myaccount.google.com/permissions">https://myaccount.google.com/permissions</a>, after which the stored
+      refresh token stops working; the owner also deletes it from the hosting configuration.
+    </p>
+
+    <h2>7. Security</h2>
+    <p>
+      The API is protected by a secret key, credentials are stored as encrypted environment variables, and the app does not
+      access the server's file system or fetch remote content unless explicitly enabled by the owner.
+    </p>
+
+    <h2>8. Changes</h2>
+    <p>Updates to this policy will be posted on this page with a new "Last updated" date.</p>
+
+    <h2>9. Contact</h2>
+    <p>
+      Questions about this policy can be submitted via
+      <a href="https://github.com/rojarsmith/vercel-mail/issues">GitHub Issues</a>.
+    </p>
+
+    <footer class="muted">
+      <a href="/">private-automation</a> · Privacy Policy
+    </footer>
+  </main>
+</body>
+</html>

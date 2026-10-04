@@ -36,6 +36,8 @@ Client ──POST /api/send (Bearer API_KEY, JSON)──▶ Vercel Function
 | `api/send.js` | `POST /api/send` sends email |
 | `api/health.js` | `GET /api/health` checks env vars and whether the refresh token still works (sends nothing) |
 | `lib/mailer.js` | Validation, OAuth token, MIME composition, Gmail API calls |
+| `public/index.html` | Public home page (`/`), describes the app for Google brand verification |
+| `public/privacy.html` | Privacy policy (`/privacy`) |
 | `.env.example` | Environment variable template (for local `vercel dev`) |
 
 ---
@@ -103,7 +105,18 @@ The listed issues are from the previous verification attempt; once the fields ar
 | Consistent app name | The name shown on the home page must match the OAuth consent screen app name |
 | Domain ownership | Verify a URL-prefix property (e.g. `https://<your-app>.vercel.app`) in [Google Search Console](https://search.google.com/search-console) via HTML file or meta tag, then wait 24 hours before retrying |
 
-On Vercel, static pages can be served by adding files such as `public/index.html` and `public/privacy.html` to this project.
+This project already includes these pages:
+
+- Home page: `https://<your-app>.vercel.app/` (`public/index.html`)
+- Privacy policy: `https://<your-app>.vercel.app/privacy` (`public/privacy.html`)
+
+Before submitting:
+
+1. The privacy policy's contact (section 9 of `public/privacy.html`) points to this repo's GitHub Issues so no personal email is published; change it if you prefer another contact channel.
+2. The pages use the app name `private-automation`; if your OAuth consent screen uses a different name, change the `<title>` and `<h1>` in both pages to match.
+3. The privacy policy describes the `gmail.send` scope; if you use `https://mail.google.com/`, either switch to `gmail.send` (recommended) or update the policy.
+4. In Search Console, choose the HTML tag method and paste the `<meta name="google-site-verification" ...>` tag at the marked spot in `public/index.html` (or put the downloaded `googleXXXX.html` file in `public/`), deploy, then click Verify.
+5. On the Branding page set home page to `https://<your-app>.vercel.app`, privacy policy to `https://<your-app>.vercel.app/privacy`, and add `<your-app>.vercel.app` under Authorized domains.
 
 > ⚠️ The client secret, refresh token and access token are secrets. Keep them only in Vercel environment variables; never commit them to git or post them publicly.
 > If they have leaked, reset the client secret in Cloud Console, revoke the old grant at <https://myaccount.google.com/permissions>, then obtain a new token.
