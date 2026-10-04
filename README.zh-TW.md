@@ -73,6 +73,36 @@ Client ──POST /api/send (Bearer API_KEY, JSON)──▶ Vercel Function
    更新 Vercel 的 `GMAIL_REFRESH_TOKEN` 後 Redeploy。舊 token 仍會依原本的 7 天到期。
 4. 用 `GET /api/health` 驗證（見 [部署後驗證](#部署後驗證)）。
 
+### 品牌驗證問題
+
+若主控台出現**品牌驗證問題**（例如首頁沒有回應、網站未註冊給您、首頁不含隱私權政策連結、隱私權政策網址與首頁相同、
+首頁必須登入才能瀏覽、首頁未說明應用程式用途、應用程式名稱與首頁不同），原因是品牌頁填了網址或上傳了標誌，或曾送出驗證。
+
+**要讓 refresh token 不再 7 天過期，只需要「實際運作中（In production）」狀態，不需要通過品牌驗證。**
+
+**方法 A（個人使用建議）：移除品牌資料後直接發布**
+
+1. Google Auth Platform →「品牌」：
+   - 清空「應用程式首頁」「隱私權政策連結」「服務條款連結」。
+   - 若有上傳「應用程式標誌」也刪除（標誌同樣會觸發品牌驗證）。
+   - 移除「授權網域」中的項目。
+   - 儲存。
+2. Google Auth Platform →「目標對象」→ **發布應用程式** → 確認。
+3. 狀態變為 **實際運作中**（顯示「未經驗證」沒關係）後，重新取得 refresh token、更新 Vercel 並 Redeploy。
+
+清單中的問題是上次嘗試驗證留下的紀錄，欄位清空後就不再影響發布。
+
+**方法 B：通過品牌驗證**（只有要給其他人使用、想去掉「未經驗證」警告時才值得做）
+
+| 要求 | 做法 |
+| --- | --- |
+| 公開首頁 | 不需登入即可瀏覽、說明應用程式用途、附上隱私權政策連結 |
+| 獨立的隱私權政策頁 | 網址與首頁不同，清楚說明收集哪些資料、如何使用 |
+| 應用程式名稱一致 | 首頁顯示的名稱必須與 OAuth 同意畫面的應用程式名稱相同 |
+| 網域擁有權 | 在 [Google Search Console](https://search.google.com/search-console) 以網址前置字元（例如 `https://<your-app>.vercel.app`）透過 HTML 檔或 meta 標籤驗證，並等 24 小時後再重試 |
+
+在 Vercel 上可於本專案加入 `public/index.html`、`public/privacy.html` 等檔案來提供靜態頁面。
+
 > ⚠️ Client Secret、refresh token、access token 都是機密，請只放在 Vercel 環境變數中，不要提交到 git 或貼到公開地方。
 > 若曾外流，請到 Cloud Console 重設 Client Secret，並到 <https://myaccount.google.com/permissions> 撤銷舊授權後重新取得。
 
