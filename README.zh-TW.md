@@ -45,7 +45,7 @@ Client ──POST /api/send (Bearer API_KEY, JSON)──▶ Vercel Function
 1. **OAuth 同意畫面發布狀態要改成「In production（正式版）」**
    你目前拿到的 `refresh_token_expires_in: 604799`（約 7 天）代表 App 仍在 **Testing** 狀態，
    refresh token 7 天後就會失效。到 Google Cloud Console → *Google Auth Platform* → *Audience* →
-   **Publish app**。只給自己用的話不必送審，登入時會出現「未經驗證」警告，按「繼續」即可。
+   **Publish app**（詳細步驟見下方 [發布應用程式](#發布應用程式)）。
    發布後**要重新取得一次 refresh token**（舊的仍會在 7 天後過期）。
 2. 已啟用 **Gmail API**（APIs & Services → Library → Gmail API → Enable）。
 3. Scope：目前用 `https://mail.google.com/` 可以運作；若只需寄信，建議改用最小權限
@@ -54,6 +54,24 @@ Client ──POST /api/send (Bearer API_KEY, JSON)──▶ Vercel Function
    - 右上齒輪 → 勾選 **Use your own OAuth credentials**，填入你的 Client ID / Secret
    - 你的 OAuth Client 的 *Authorized redirect URIs* 需包含 `https://developers.google.com/oauthplayground`
    - Step 1 選 scope → Authorize → Step 2 **Exchange authorization code for tokens** → 複製 `refresh_token`
+
+### 發布應用程式
+
+只給自己用的話**不需要**送 Google 審核，「未經驗證」的正式版 App 即可正常使用。
+
+1. **品牌（Branding）頁——網址欄位留空**
+   Google Auth Platform →「品牌」：「應用程式首頁」「應用程式隱私權政策連結」「應用程式服務條款連結」三個欄位**全部留空**
+   （本 API 根目錄本來就沒有網頁）。只要有填網址，該網域就必須列在「授權網域」中，否則會出現 `缺少網域：<your-app>.vercel.app` 的錯誤。
+   - 替代做法：保留網址，並在「授權網域」新增該網域（例如 `<your-app>.vercel.app`）。只有要送審時才需要到 Search Console 驗證網域。
+2. **目標對象（Audience）頁——發布**
+   Google Auth Platform →「目標對象」→ **發布應用程式（Publish app）** → 確認。狀態變為 **實際運作中（In production）**，可能顯示「需要驗證」或「未經驗證」，不影響使用：
+   - 未驗證的 App 最多 100 位使用者，個人使用綽綽有餘。
+   - 授權時會出現「Google 尚未驗證這個應用程式」，點「進階」→「前往…（不安全）」即可。
+   - 發布後重新取得的 refresh token 不會再 7 天過期。
+3. **重新取得 refresh token**
+   再用 OAuth Playground（上方第 4 點）取得新的 token，建議 scope 改用 `https://www.googleapis.com/auth/gmail.send`，
+   更新 Vercel 的 `GMAIL_REFRESH_TOKEN` 後 Redeploy。舊 token 仍會依原本的 7 天到期。
+4. 用 `GET /api/health` 驗證（見 [部署後驗證](#部署後驗證)）。
 
 > ⚠️ Client Secret、refresh token、access token 都是機密，請只放在 Vercel 環境變數中，不要提交到 git 或貼到公開地方。
 > 若曾外流，請到 Cloud Console 重設 Client Secret，並到 <https://myaccount.google.com/permissions> 撤銷舊授權後重新取得。

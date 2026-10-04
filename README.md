@@ -45,7 +45,7 @@ Client ──POST /api/send (Bearer API_KEY, JSON)──▶ Vercel Function
 1. **Set the OAuth consent screen publishing status to "In production"**
    If your token response shows `refresh_token_expires_in: 604799` (about 7 days), the app is still in **Testing**
    and the refresh token will expire after 7 days. Go to Google Cloud Console → *Google Auth Platform* → *Audience* →
-   **Publish app**. For personal use no verification review is required; sign-in will show an "unverified app" warning — click "Continue".
+   **Publish app** (detailed steps in [Publishing the App](#publishing-the-app) below).
    **Obtain a new refresh token after publishing** (tokens issued before still expire after 7 days).
 2. The **Gmail API** is enabled (APIs & Services → Library → Gmail API → Enable).
 3. Scope: `https://mail.google.com/` works; if you only need to send, use the least-privilege scope
@@ -54,6 +54,25 @@ Client ──POST /api/send (Bearer API_KEY, JSON)──▶ Vercel Function
    - Gear icon (top right) → check **Use your own OAuth credentials** and enter your Client ID / Secret
    - Your OAuth client's *Authorized redirect URIs* must include `https://developers.google.com/oauthplayground`
    - Step 1 select scope → Authorize → Step 2 **Exchange authorization code for tokens** → copy `refresh_token`
+
+### Publishing the App
+
+For personal use you do **not** need Google verification; an unverified app in production works fine.
+
+1. **Branding page — leave the URL fields empty**
+   Google Auth Platform → *Branding*: leave *Application home page*, *Privacy policy link* and *Terms of service link* **empty**
+   (this API has no web page at its root anyway). If any of these contain a URL, its domain must be listed under *Authorized domains*,
+   otherwise you get an error such as `Missing domain: <your-app>.vercel.app`.
+   - Alternative: keep the URLs and add the domain (e.g. `<your-app>.vercel.app`) under *Authorized domains*. Search Console verification is only needed if you submit the app for verification.
+2. **Audience page — publish**
+   Google Auth Platform → *Audience* → **Publish app** → Confirm. The status becomes **In production**; it may show "Needs verification" / "Unverified", which does not block usage:
+   - Unverified apps are limited to 100 users — plenty for personal use.
+   - When authorizing, Google shows "Google hasn't verified this app": click *Advanced* → *Go to … (unsafe)*.
+   - Refresh tokens issued after publishing no longer expire after 7 days.
+3. **Re-issue the refresh token**
+   Use the OAuth Playground again (step 4 above), preferably with the `https://www.googleapis.com/auth/gmail.send` scope,
+   update `GMAIL_REFRESH_TOKEN` in Vercel, then Redeploy. The old token still expires on its original 7-day schedule.
+4. Verify with `GET /api/health` (see [Post-deployment Verification](#post-deployment-verification)).
 
 > ⚠️ The client secret, refresh token and access token are secrets. Keep them only in Vercel environment variables; never commit them to git or post them publicly.
 > If they have leaked, reset the client secret in Cloud Console, revoke the old grant at <https://myaccount.google.com/permissions>, then obtain a new token.
