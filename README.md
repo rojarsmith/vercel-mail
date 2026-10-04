@@ -246,3 +246,33 @@ console.log(await res.json());
 - **Security**: The server never reads local files (`disableFileAccess`); URL attachments are disabled by default and only https is allowed.
 - **Refresh token invalid** (response contains `invalid_grant`): usually the 7-day expiry in Testing status, a revoked grant, or a changed password / client secret. Obtain a new token, update `GMAIL_REFRESH_TOKEN`, and Redeploy.
 - Max execution time is set to 30 seconds in `vercel.json` (available on the Hobby plan).
+
+## 6. Deliverability (Avoiding the Junk Folder)
+
+Mail is sent from Google's servers as `@gmail.com`, so SPF / DKIM / DMARC are handled by Google and normally pass.
+If messages land in junk (e.g. Outlook / Hotmail), the cause is usually sender reputation or content, not this API.
+
+### Common causes
+
+1. **First contact**: the recipient has never exchanged mail with this Gmail account, so trust is low.
+2. **Thin content**: very short, low-information messages (e.g. "test") are easily flagged.
+3. **Personal Gmail as a system sender**: Microsoft is stricter with automated-looking mail from free mailbox providers.
+
+### Improvements (easiest first)
+
+1. **Recipient marks it "Not junk"** and adds the sender to Safe Senders — the most effective fix for a given recipient.
+2. **Send meaningful content**: a specific subject, both `text` and `html` with matching content; avoid one-word bodies, image-only mail or link-only mail.
+3. **For bulk or unknown recipients**: use Google Workspace with your own domain (e.g. `noreply@yourdomain.com`) and configure SPF / DKIM / DMARC,
+   or for high volume switch to a transactional email service (SendGrid, Amazon SES, Resend, etc.). Personal Gmail is not meant for bulk mail (~500/day).
+
+### Diagnosing (Outlook)
+
+Open the message → *View → View message source* (or *… → View → View message details*) and check:
+
+| Header | What to look for |
+| --- | --- |
+| `Authentication-Results` | `spf=`, `dkim=`, `dmarc=` should all be `pass` |
+| `X-MS-Exchange-Organization-SCL` | Spam confidence level; 5 or higher goes to junk |
+| `X-Forefront-Antispam-Report` | `SFV:` (filter verdict), `SCL:`, `CAT:` (category) |
+
+Authentication failures point to a sender/domain setup issue; passing authentication with a high SCL points to content or reputation.
