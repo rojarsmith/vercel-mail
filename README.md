@@ -101,6 +101,15 @@ curl https://<your-app>.vercel.app/api/health -H "Authorization: Bearer $API_KEY
 curl -X POST https://<your-app>.vercel.app/api/send -H "Authorization: Bearer $API_KEY" -H "Content-Type: application/json" -d '{"to":"you@gmail.com","subject":"vercel-mail test","text":"Plain text","html":"<b>HTML</b> content"}'
 ```
 
+   > **Windows (cmd.exe / PowerShell)**: cmd does not support single quotes, so the JSON above gets split and the body becomes invalid JSON.
+   > Save the JSON as a UTF-8 file (e.g. `body.json`) and send it with `-d @body.json` (in PowerShell use `curl.exe` instead of `curl`):
+   >
+   > ```bash
+   > curl.exe -X POST https://<your-app>.vercel.app/api/send -H "Authorization: Bearer <API_KEY>" -H "Content-Type: application/json" -d @body.json
+   > ```
+   >
+   > `<API_KEY>` is the `API_KEY` value you set in Vercel — **not** a Google access token (`ya29.…`).
+
 3. Check Gmail's "Sent" folder, then test attachments and inline images as needed (see examples below).
 
 ## 3. Deployment
