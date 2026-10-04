@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Search Console: paste the verification meta tag here, e.g.
+  <meta name="google-site-verification" content="..."> -->
+  <title>private-automation</title>
+  <meta name="description" content="private-automation: a private email-sending service that sends notification emails from its owner's Gmail account via the Gmail API.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header>
+      <h1>private-automation</h1>
+      <p class="muted">A private email-sending service for its owner's own automated workflows.</p>
+      <nav>
+        <a href="/privacy">Privacy Policy</a>
+        <a href="https://github.com/rojarsmith/vercel-mail">Source code</a>
+      </nav>
+    </header>
+
+    <section class="card">
+      <h2>What this app does</h2>
+      <p>
+        <strong>private-automation</strong> is a small server-side API that sends email messages from its owner's Gmail account
+        using the Gmail API. The owner's own backend systems call this API to send notifications, reports and other messages
+        (plain text, HTML, inline images and attachments).
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>How it uses Google data</h2>
+      <ul>
+        <li>The app requests permission to <strong>send email</strong> on behalf of the single Google account that authorized it (the owner).</li>
+        <li>It does <strong>not</strong> read, search, modify or delete any existing email, contacts or other Google data.</li>
+        <li>Message content is passed directly to the Gmail API to be sent and is not stored by the app.</li>
+        <li>The API is protected by a private key; it is not offered to the public and has no user sign-up.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Who can use it</h2>
+      <p>
+        This app is operated for personal use by its owner. There are no public user accounts and no login is required to read
+        this page. See the <a href="/privacy">Privacy Policy</a> for details on data handling.
+      </p>
+    </section>
+
+    <footer class="muted">
+      private-automation · <a href="/privacy">Privacy Policy</a>
+    </footer>
+  </main>
+</body>
+</html>

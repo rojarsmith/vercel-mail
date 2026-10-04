@@ -36,6 +36,8 @@ Client ──POST /api/send (Bearer API_KEY, JSON)──▶ Vercel Function
 | `api/send.js` | `POST /api/send` 寄信 |
 | `api/health.js` | `GET /api/health` 檢查環境變數與 refresh token 是否仍可用（不寄信） |
 | `lib/mailer.js` | 驗證、OAuth token、MIME 組裝、Gmail API 呼叫 |
+| `public/index.html` | 公開首頁（`/`），說明應用程式用途，供 Google 品牌驗證使用 |
+| `public/privacy.html` | 隱私權政策（`/privacy`） |
 | `.env.example` | 環境變數範本（本機 `vercel dev` 用） |
 
 ---
@@ -101,7 +103,18 @@ Client ──POST /api/send (Bearer API_KEY, JSON)──▶ Vercel Function
 | 應用程式名稱一致 | 首頁顯示的名稱必須與 OAuth 同意畫面的應用程式名稱相同 |
 | 網域擁有權 | 在 [Google Search Console](https://search.google.com/search-console) 以網址前置字元（例如 `https://<your-app>.vercel.app`）透過 HTML 檔或 meta 標籤驗證，並等 24 小時後再重試 |
 
-在 Vercel 上可於本專案加入 `public/index.html`、`public/privacy.html` 等檔案來提供靜態頁面。
+本專案已內建這兩個頁面：
+
+- 首頁：`https://<your-app>.vercel.app/`（`public/index.html`）
+- 隱私權政策：`https://<your-app>.vercel.app/privacy`（`public/privacy.html`）
+
+送審前：
+
+1. 隱私權政策的聯絡方式（`public/privacy.html` 第 9 節）指向本 repo 的 GitHub Issues，避免公開個人信箱；若要改用其他聯絡管道請自行修改。
+2. 頁面使用的應用程式名稱是 `private-automation`；若 OAuth 同意畫面的名稱不同，請同步修改兩個頁面的 `<title>` 與 `<h1>`。
+3. 隱私權政策描述的是 `gmail.send` scope；若你使用 `https://mail.google.com/`，請改用 `gmail.send`（建議）或修改政策內容。
+4. 在 Search Console 選「HTML 標記」驗證方式，把 `<meta name="google-site-verification" ...>` 貼到 `public/index.html` 中標註的位置（或把下載的 `googleXXXX.html` 放進 `public/`），部署後按「驗證」。
+5. 品牌頁的首頁填 `https://<your-app>.vercel.app`、隱私權政策填 `https://<your-app>.vercel.app/privacy`，並在「授權網域」加入 `<your-app>.vercel.app`。
 
 > ⚠️ Client Secret、refresh token、access token 都是機密，請只放在 Vercel 環境變數中，不要提交到 git 或貼到公開地方。
 > 若曾外流，請到 Cloud Console 重設 Client Secret，並到 <https://myaccount.google.com/permissions> 撤銷舊授權後重新取得。
