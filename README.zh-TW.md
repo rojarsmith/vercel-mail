@@ -246,3 +246,33 @@ console.log(await res.json());
 - **安全**：伺服器不讀取本機檔案（`disableFileAccess`），URL 附件預設停用且只允許 https。
 - **refresh token 失效**（回應含 `invalid_grant`）：通常是 Testing 狀態 7 天過期、使用者撤銷授權、或改了密碼／Client Secret，請重新取得並更新 `GMAIL_REFRESH_TOKEN` 後 Redeploy。
 - 執行時間上限在 `vercel.json` 設為 30 秒（Hobby 方案可用）。
+
+## 六、寄信品質（避免被歸類為垃圾郵件）
+
+信件由 Google 伺服器以 `@gmail.com` 寄出，SPF / DKIM / DMARC 由 Google 處理，通常都會通過。
+若被收件端（例如 Outlook / Hotmail）歸類為垃圾郵件，原因多半是寄件者信譽或信件內容，而非本 API。
+
+### 常見原因
+
+1. **第一次往來**：收件者與此 Gmail 帳號從未往來，信任度低。
+2. **內容過於單薄**：極短、沒有實質資訊的信（例如「測試」）容易被判定為垃圾信。
+3. **用個人 Gmail 當系統寄件者**：Microsoft 對免費信箱寄出、看起來像自動通知的信件較嚴格。
+
+### 改善方式（由簡到難）
+
+1. **收件者標記「非垃圾郵件」**並將寄件者加入安全寄件者清單——對特定收件者最有效。
+2. **寄送有實質內容的信**：主旨具體、同時提供內容一致的 `text` 與 `html`；避免一兩個字的內文、整封只有圖片或只有連結。
+3. **大量寄送或寄給不認識的收件者**：改用 Google Workspace 綁自己的網域（例如 `noreply@yourdomain.com`）並設定 SPF / DKIM / DMARC；
+   量大時改用交易信服務（SendGrid、Amazon SES、Resend 等）。個人 Gmail 不適合大量寄信（每日約 500 封）。
+
+### 診斷方式（Outlook）
+
+開啟信件 →「檢視 → 檢視郵件來源」（或「… → 檢視 → 檢視郵件詳細資料」），檢查：
+
+| 標頭 | 檢查重點 |
+| --- | --- |
+| `Authentication-Results` | `spf=`、`dkim=`、`dmarc=` 是否皆為 `pass` |
+| `X-MS-Exchange-Organization-SCL` | 垃圾信信賴等級，5 以上會進垃圾郵件 |
+| `X-Forefront-Antispam-Report` | `SFV:`（篩選結果）、`SCL:`、`CAT:`（分類） |
+
+驗證失敗代表寄件者／網域設定問題；驗證通過但 SCL 偏高則代表內容或信譽問題。
